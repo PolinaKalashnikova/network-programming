@@ -11,6 +11,7 @@ import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.net.ConnectException;
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -35,7 +36,8 @@ public class MainFrame extends JFrame {
     private static final int SMALL_GAP = 5;
     private static final int MEDIUM_GAP = 10;
     private static final int LARGE_GAP = 15;
-    private static final int SERVER_PORT = 4567;
+    private static int SERVER_PORT=4567;
+    private static int SERVER_PORTT;
     private final JTextField textFieldFrom;
     private final JTextField textFieldTo;
     private final JTextArea textAreaIncoming;
@@ -145,6 +147,7 @@ public class MainFrame extends JFrame {
                                         .getRemoteSocketAddress())
                                         .getAddress()
                                         .getHostAddress();
+
 // Выводим сообщение в текстовую область
                         textAreaIncoming.append(senderName +
                                 " (" + address + "): " +
@@ -165,8 +168,13 @@ public class MainFrame extends JFrame {
         try {
 // Получаем необходимые параметры
             final String senderName = textFieldFrom.getText();
-            final String destinationAddress = textFieldTo.getText();
+            final String destinationAddresss = textFieldTo.getText();
+            final String destinationAddress;
             final String message = textAreaOutgoing.getText();
+            String[] port = destinationAddresss.split(":");
+            SERVER_PORTT = Integer.parseInt(port[1]);
+            destinationAddress = port[0];
+
 // Убеждаемся, что поля не пустые
             if (senderName.isEmpty()) {
                 JOptionPane.showMessageDialog(this,
@@ -188,7 +196,7 @@ public class MainFrame extends JFrame {
             }
 // Создаем сокет для соединения
             final Socket socket =
-                    new Socket(destinationAddress, SERVER_PORT);
+                    new Socket(destinationAddress, SERVER_PORTT);
 // Открываем поток вывода данных
             final DataOutputStream out =
                     new DataOutputStream(socket.getOutputStream());
@@ -207,6 +215,11 @@ public class MainFrame extends JFrame {
             e.printStackTrace();
             JOptionPane.showMessageDialog(MainFrame.this,
                     "Не удалось отправить сообщение: узел-адресат не найден",
+                    "Ошибка", JOptionPane.ERROR_MESSAGE);
+        }catch (ConnectException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(MainFrame.this,
+                    "Не удалось отправить сообщение: не установленно соединение",
                     "Ошибка", JOptionPane.ERROR_MESSAGE);
         } catch (IOException e) {
             e.printStackTrace();
