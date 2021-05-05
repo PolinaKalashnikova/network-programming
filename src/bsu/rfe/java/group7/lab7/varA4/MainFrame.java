@@ -56,7 +56,6 @@ public class MainFrame extends JFrame {
     private final JTextArea textAreaIncoming;
     private final JTextArea textAreaOutgoing;
 
-    String curStringDate;
 
     public MainFrame() {
         super(FRAME_TITLE);
@@ -106,7 +105,7 @@ public class MainFrame extends JFrame {
                 sendMessage();
             }
         });
-        ///////////////////////////////////////////////////////////////////////////
+
         final ButtonGroup myButtons = new ButtonGroup();
 
         JRadioButton radio1 = new JRadioButton ("Вкл.",true);
@@ -210,8 +209,8 @@ public class MainFrame extends JFrame {
                         // Выделяем IP-адрес
                         final String address =
                                 ((InetSocketAddress) socket
-                                        .getRemoteSocketAddress())
-                                        .getAddress()
+                                        .getRemoteSocketAddress()) //возращает адрес удаленного сокета, с которым установлено соединение
+                                        .getAddress() // адрес получателя
                                         .getHostAddress();
 
                         // Закрываем соединение
@@ -234,17 +233,12 @@ public class MainFrame extends JFrame {
         }).start();
     }
 
-    private Object newJScrollPane(JTextArea textAreaOutgoing2) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
     private void sendMessage() {
         try {
             // Получаем необходимые параметры
-            final String senderName = textFieldFrom.getText().trim();
-            final String destinationAddress = textFieldTo.getText().trim();
-            final String message = textAreaOutgoing.getText().trim();
+            final String senderName = textFieldFrom.getText();
+            final String destinationAddress = textFieldTo.getText();
+            final String message = textAreaOutgoing.getText();
 
 // Убеждаемся, что поля не пустые
             if (senderName.isEmpty()) {
